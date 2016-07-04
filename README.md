@@ -1,32 +1,32 @@
 # Peer certificate extractor
 
-Herramienta para la extracción del peer certificate desde un certificado dado. 
+This tool extracts peer certificates from given certificates.
 
-Cuando implementamos el certificate pinning en una conexión necesitamos definir un peer certificate, que es la clave pública de un certificado luego de hacerle un sha256 y pasarlo a base64. Esta herramienta facilita esa tarea al extraer el peer certificate desde unos de los archivos soportados: crt, der o pem file.
+In order to implement certificate pinning during an SSL connection, a peer certificate needs to be declared first. This peer certificate is a certificate´s public key after being transformed using SHA256 algorithm and base64 encryption. This tool eases the peer certificate extraction task and supports files such as .crt, .der or .pem.
 
-Esto lo hacemos de esta forma:
+In order to extract a peer certificate:
 
 ~~~java
     File certificate = new File(certificateUri);
     String peerCertificate = PeerCertificateExtractor.extract(certificate);
 ~~~
   
-Esto nos devuelve el peer certificate:
+Retrieved peer certificates format:
 
 ~~~
     sha256/u4QJrwx7aSejc080BBQKGyTaoJovFBg4SbQ9nhoohb8=
 ~~~
 
-Puedes ver más ejemplos de cómo funciona en la carpeta `src/test`
+For further usage examples, navigate to `src/test`
 
 ## Okhttp
 
-Cuando habilitamos el certificate pinning en okhttp lo hacemos de la siguiente forma, en donde el sha256/AAAAAAAA… es el que esta herramienta extrae para ti desde un certificado. 
+Enabling okhttp certificate pinning is now made the following way: 
 
 ~~~java
     client = new OkHttpClient.Builder()
                 .certificatePinner(new CertificatePinner.Builder()
-                    .add("publicobject.com", "sha256/AAAAA...")
+                    .add("publicobject.com", peerCertificate)
                     .build())
                 .build();
 ~~~
